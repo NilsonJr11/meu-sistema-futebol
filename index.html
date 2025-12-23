@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <div id="dashboard" class="dashboard-stats">
+        </div>
+    <title>Cadastro Base Futebol</title>
+    <style>
+        .dashboard-stats {
+        display: flex;
+        justify-content: space-around;
+        background: #e8f5e9;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border: 1px solid #2e7d32;
+        font-weight: bold;
+        color: #2e7d32;
+        text-align: center; 
+        }
+        .stat-item span { display: block; font-size: 1.2em; color: #1b5e20; }
+
+        /* 1. VISUAL GERAL */
+        body { 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            background-color: #1a472a; /* Verde Gramado */
+            padding: 20px; 
+            display: flex;
+            justify-content: center;
+        }
+
+        .container { 
+            max-width: 850px; 
+            width: 100%;
+            background: white; 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); 
+        }
+
+        h2 { color: #2e7d32; text-align: center; margin-top: 0; }
+
+        
+                /* 2. BARRA DE BUSCA E BOTÕES SUPERIORES */
+        .controles-topo {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center; /* Alinha verticalmente */
+        }
+
+        #campoBusca {
+            flex: 4; /* Faz a barra de busca ocupar a maior parte do espaço */
+            padding: 12px;
+            border: 2px solid #2e7d32;
+            border-radius: 8px;
+            font-size: 16px;
+            width: auto; /* Garante que o 100% anterior não quebre o layout */
+            margin-top: 0; /* Remove margens extras */
+        }
+
+        .btn-pdf {
+            flex: 1; /* O botão PDF ocupa apenas o espaço necessário */
+            background-color: #1976d2;
+            color: white;
+            border: none;
+            height: 48px; /* Mesma altura do input de busca */
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            width: auto; /* Impede que o botão ocupe 100% da largura */
+            margin-top: 0;
+            transition: background 0.3s;
+        }
+
+        .btn-pdf:hover {
+            background-color: #1565c0;
+        }
+
+        /* 3. FORMULÁRIO */
+        form { 
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border: 1px solid #eee;
+        }
+
+        label { display: block; margin-top: 10px; font-weight: bold; color: #444; }
+        input, select, button { width: 100%; padding: 12px; margin-top: 5px; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box; }
+        
+        #btnSubmit { 
+            background-color: #2e7d32; 
+            color: white; 
+            border: none; 
+            font-weight: bold; 
+            cursor: pointer; 
+            margin-top: 15px;
+            font-size: 16px;
+        }
+
+        /* 4. GRID DE ATLETAS (CARDS) */
+        #listaAtletas {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .card-atleta { 
+            background: #f1f8e9; 
+            border: 2px solid #c8e6c9; 
+            padding: 15px; 
+            border-radius: 10px; 
+            text-align: center;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .card-atleta:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        
+        .card-atleta strong { color: #1b5e20; font-size: 18px; display: block; }
+        .card-atleta small { color: #666; display: block; margin: 5px 0; }
+        
+        .badge-categoria {
+            background: #2e7d32;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        .acoes-card { display: flex; gap: 5px; margin-top: 10px; }
+        .btn-excluir { background: #d32f2f; color: white; border: none; padding: 5px; border-radius: 4px; cursor: pointer; font-size: 11px; flex: 1; }
+        .btn-editar { background: #ffa000; color: white; border: none; padding: 5px; border-radius: 4px; cursor: pointer; font-size: 11px; flex: 1; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>⚽ Sistema de Base - Cadastro</h2>
+
+        <div class="controles-topo">
+            <input type="text" id="campoBusca" placeholder="🔍 Buscar jogador pelo nome..." onkeyup="filtrarJogadores()">
+            <button class="btn-pdf" onclick="gerarPDF()">PDF</button>
+        </div>
+        
+        <form id="formCadastro">
+            <label>Nome Completo:</label>
+            <input type="text" id="nome" placeholder="Ex: Neymar Jr" required>
+
+            <label>Foto do Atleta:</label>
+            <input type="file" id="foto" accept="image/*">
+
+            <label>Data de Nascimento:</label>
+            <input type="date" id="nascimento" required>
+
+            <label>Posição:</label>
+            <select id="posicao">
+                <option value="Goleiro">Goleiro</option>
+                <option value="Zagueiro">Zagueiro</option>
+                <option value="Lateral">Lateral</option>
+                <option value="Volante">Volante</option>
+                <option value="Meia">Meia</option>
+                <option value="Atacante">Atacante</option>
+            </select>
+
+            <label>Perna Dominante:</label>
+            <select id="perna">
+                <option value="Destro">Destro</option>
+                <option value="Canhoto">Canhoto</option>
+                <option value="Ambidestro">Ambidestro</option>
+            </select>
+
+            <button type="submit" id="btnSubmit">Cadastrar Jogador</button>
+        </form>
+
+        <h3 style="text-align: center; color: #2e7d32;">Jogadores Cadastrados</h3>
+        <div id="listaAtletas">
+            </div>
+    </div>
+
+    <script>
+        let atletasCadastrados = JSON.parse(localStorage.getItem('meusAtletas')) || [];
+        let indiceEmEdicao = -1;
+
+        const form = document.getElementById('formCadastro');
+        const listaDiv = document.getElementById('listaAtletas');
+        const btnSubmit = document.getElementById('btnSubmit');
+
+        function salvarNoNavegador() {
+            localStorage.setItem('meusAtletas', JSON.stringify(atletasCadastrados));
+        }
+
+        function definirCategoria(dataNascimento) {
+            const hoje = new Date();
+            const nasc = new Date(dataNascimento);
+            let idade = hoje.getFullYear() - nasc.getFullYear();
+            if (new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate()) < 
+                new Date(hoje.getFullYear(), nasc.getMonth(), nasc.getDate())) idade--;
+
+            if (idade <= 11) return "Sub-11";
+            if (idade <= 13) return "Sub-13";
+            if (idade <= 15) return "Sub-15";
+            if (idade <= 17) return "Sub-17";
+            if (idade <= 20) return "Sub-20";
+            return "Profissional";
+        }
+
+        function renderizarLista() {
+            listaDiv.innerHTML = '';
+            if (atletasCadastrados.length === 0) {
+                listaDiv.innerHTML = '<p style="grid-column: 1/-1; text-align:center;">Nenhum atleta na base.</p>';
+                return;
+            }
+
+            atletasCadastrados.forEach((atleta, index) => {
+                listaDiv.innerHTML += `
+                    <div class="card-atleta">
+                        <span class="badge-categoria">${atleta.categoria}</span>
+                        <strong>${atleta.nome}</strong>
+                        <small>${atleta.posicao} | ${atleta.perna}</small>
+                        <div class="acoes-card">
+                            <button class="btn-editar" onclick="iniciarEdicao(${index})">Editar</button>
+                            <button class="btn-excluir" onclick="removerAtleta(${index})">Excluir</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // --- NOVAS FUNÇÕES ---
+
+        function filtrarJogadores() {
+            const termo = document.getElementById('campoBusca').value.toLowerCase();
+            const cards = document.querySelectorAll('.card-atleta');
+
+            cards.forEach(card => {
+                const nome = card.querySelector('strong').innerText.toLowerCase();
+                card.style.display = nome.includes(termo) ? "block" : "none";
+            });
+        }
+
+        function gerarPDF() {
+            const win = window.open('', '', 'height=700,width=900');
+            win.document.write('<html><head><title>Relatório de Base</title>');
+            win.document.write('<style>table{width:100%; border-collapse:collapse;} th,td{border:1px solid #ccc; padding:10px; text-align:left;} th{background:#eee;}</style>');
+            win.document.write('</head><body>');
+            win.document.write('<h1>Relatório de Atletas Cadastrados</h1>');
+            win.document.write('<table><tr><th>Nome</th><th>Categoria</th><th>Posição</th><th>Perna</th></tr>');
+            
+            atletasCadastrados.forEach(a => {
+                win.document.write(`<tr><td>${a.nome}</td><td>${a.categoria}</td><td>${a.posicao}</td><td>${a.perna}</td></tr>`);
+            });
+
+            win.document.write('</table></body></html>');
+            win.document.close();
+            win.print();
+        }
+
+        // --- FIM NOVAS FUNÇÕES ---
+
+        window.removerAtleta = (index) => {
+            if(confirm("Excluir atleta?")) {
+                atletasCadastrados.splice(index, 1);
+                salvarNoNavegador();
+                renderizarLista();
+            }
+        };
+
+        window.iniciarEdicao = (index) => {
+            const a = atletasCadastrados[index];
+            document.getElementById('nome').value = a.nome;
+            document.getElementById('nascimento').value = a.nascimento;
+            document.getElementById('posicao').value = a.posicao;
+            document.getElementById('perna').value = a.perna;
+            indiceEmEdicao = index;
+            btnSubmit.textContent = "Atualizar Dados";
+            window.scrollTo(0,0);
+        };
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const atleta = {
+                nome: document.getElementById('nome').value,
+                nascimento: document.getElementById('nascimento').value,
+                posicao: document.getElementById('posicao').value,
+                perna: document.getElementById('perna').value,
+                categoria: definirCategoria(document.getElementById('nascimento').value)
+            };
+
+            if (indiceEmEdicao > -1) {
+                atletasCadastrados[indiceEmEdicao] = atleta;
+                indiceEmEdicao = -1;
+                btnSubmit.textContent = "Cadastrar Jogador";
+            } else {
+                atletasCadastrados.push(atleta);
+            }
+
+            salvarNoNavegador();
+            renderizarLista();
+            form.reset();
+        });
+
+        renderizarLista();
+    </script>
+</body>
+</html>
