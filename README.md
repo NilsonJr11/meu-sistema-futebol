@@ -1,3 +1,5 @@
+## ⚠️ Projeto em desenvolvimento
+
 # ⚽ Sistema de Gestão - Base de Futebol
 Este é um sistema prático e intuitivo para o cadastro e gerenciamento de atletas de categorias de base. O projeto foi desenvolvido para facilitar a organização de elencos, permitindo o acompanhamento de categorias, posições e exportação de dados.
 
