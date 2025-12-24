@@ -86,5 +86,50 @@ form.addEventListener('submit', function(event) {
     alert("Jogador " + nome + " salvo com sucesso!");
 });
 
+// FUNÇÃO PARA EXPORTAR (BAIXAR ARQUIVO)
+function exportarDados() {
+    if (atletas.length === 0) {
+        alert("Não há dados para exportar!");
+        return;
+    }
+
+    const dataStr = JSON.stringify(atletas, null, 2);
+    const blob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "backup_atletas_base.json";
+    link.click();
+    
+    URL.revokeObjectURL(url);
+}
+
+// FUNÇÃO PARA IMPORTAR (LER ARQUIVO)
+function importarDados(event) {
+    const arquivo = event.target.files[0];
+    if (!arquivo) return;
+
+    const leitor = new FileReader();
+    leitor.onload = function(e) {
+        try {
+            const dadosImportados = JSON.parse(e.target.result);
+            
+            if (Array.isArray(dadosImportados)) {
+                if (confirm(`Deseja importar ${dadosImportados.length} atletas? Isso substituirá a lista atual.`)) {
+                    atletas = dadosImportados;
+                    localStorage.setItem('baseAtletas', JSON.stringify(atletas));
+                    renderizar();
+                    alert("Dados importados com sucesso!");
+                }
+            } else {
+                alert("O arquivo selecionado não é um backup válido.");
+            }
+        } catch (erro) {
+            alert("Erro ao ler o arquivo de backup.");
+        }
+    };
+    leitor.readAsText(arquivo);
+}
 // 6. Mostra os dados assim que a página abre
 renderizarLista();
