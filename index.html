@@ -316,6 +316,20 @@
         }
 
         renderizar();
+    // ...existing code...
+        renderizar();
     </script>
+
+    <div class="controles">
+        <button onclick="exportarDados()" style="background-color: #4caf50; color: white; border: none; border-radius: 8px; cursor: pointer; padding: 10px;">💾 Baixar Backup</button>
+        
+        <label for="inputImportar" style="background-color: #607d8b; color: white; padding: 10px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: bold; text-align: center; display: flex; align-items: center;">
+            📂 Carregar Backup
+        </label>
+        <input type="file" id="inputImportar" style="display: none;" accept=".json" onchange="importarDados(event)">
+    </div>
+
+</body>
+</html>
 </body>
 </html>
