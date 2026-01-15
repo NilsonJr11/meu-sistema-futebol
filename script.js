@@ -29,33 +29,74 @@ function renderizarMural() {
 
 renderizarMural();
 
-// 1. Array de objetos com as peneiras (DADOS)
 const listaPeneiras = [
     { 
         clube: "Santos FC", 
-        categoria: "Sub-15 e Sub-17", 
-        data: "10/02/2026", 
-        local: "CT Meninos da Vila", 
-        status: "Aberto",
-        link: "https://www.santosfc.com.br"
+        categoria: "Sub-15 (2009/2010)", 
+        data: "15/02/2026", 
+        local: "CT Rei Pelé", 
+        status: "Inscrições Abertas",
+        requisitos: "RG original, Atestado Médico (últimos 3 meses), Material de treino próprio.",
+        contato: "https://wa.me/5513999999999" // Link fictício de WhatsApp
     },
     { 
-        clube: "Flamengo", 
-        categoria: "Sub-13", 
-        data: "22/03/2026", 
+        clube: "CR Flamengo", 
+        categoria: "Sub-17 (2007/2008)", 
+        data: "20/03/2026", 
         local: "Ninho do Urubu - RJ", 
-        status: "Aberto",
-        link: "https://www.flamengo.com.br"
+        status: "Vagas Limitadas",
+        requisitos: "Ficha de inscrição preenchida, Eletrocardiograma com laudo.",
+        contato: "https://www.flamengo.com.br"
     },
     { 
         clube: "Palmeiras", 
-        categoria: "Sub-11 ao Sub-15", 
-        data: "A definir", 
+        categoria: "Sub-11 ao Sub-13", 
+        data: "Abril/2026", 
         local: "Academia de Futebol", 
         status: "Em Breve",
-        link: "https://www.palmeiras.com.br"
+        requisitos: "Monitorar o site oficial para abertura do formulário.",
+        contato: "https://www.palmeiras.com.br"
     }
 ];
+
+function renderizarMural() {
+    const mural = document.getElementById('muralPeneiras');
+    if(!mural) return;
+    
+    mural.innerHTML = '';
+    // Estilo de grid direto no JS para garantir o layout
+    mural.style.display = "grid";
+    mural.style.gridTemplateColumns = "repeat(auto-fill, minmax(300px, 1fr))";
+    mural.style.gap = "20px";
+
+    listaPeneiras.forEach(p => {
+        const corStatus = p.status === 'Inscrições Abertas' ? '#2e7d32' : '#ffa000';
+        
+        mural.innerHTML += `
+            <div style="background: white; border-top: 5px solid #1976d2; padding: 15px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: relative;">
+                <strong style="font-size: 1.2em; color: #0d47a1;">⚽ ${p.clube}</strong>
+                <div style="font-size: 0.85em; margin: 10px 0; color: #333;">
+                    <p>📅 <b>Data:</b> ${p.data}</p>
+                    <p>📍 <b>Local:</b> ${p.local}</p>
+                    <p>🏃 <b>Categoria:</b> ${p.categoria}</p>
+                    <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
+                    <p style="color: #666; font-style: italic;">📋 <b>Requisitos:</b> ${p.requisitos}</p>
+                </div>
+                
+                <div style="color: ${corStatus}; font-weight: bold; font-size: 0.9em; margin-bottom: 10px;">
+                    ● ${p.status}
+                </div>
+
+                <button onclick="window.open('${p.contato}', '_blank')" 
+                    style="width: 100%; background: #1976d2; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s;"
+                    onmouseover="this.style.background='#0d47a1'" 
+                    onmouseout="this.style.background='#1976d2'">
+                    SABER MAIS / INSCREVER
+                </button>
+            </div>
+        `;
+    });
+}
 
 renderizarMural();
 
